@@ -101,7 +101,7 @@
 
     var banderasRojasInfarto = [];
 
-    // Banderas rojas de sospecha de Síndrome Coronario Agudo
+    // Banderas rojas de sospecha de Síndrome Coronario Agudo clásico y atípico femenino
     if (s.dolorOpresivoBrazoMandibula) {
       banderasRojasInfarto.push('Dolor u opresión en el pecho que se irradia al brazo izquierdo, cuello o mandíbula.');
     }
@@ -113,6 +113,10 @@
     }
     if (s.antecedenteCardiopatiaOEdadRiesgo && s.dolorPecho) {
       banderasRojasInfarto.push('Dolor torácico nuevo en persona con antecedentes cardíacos o factores de riesgo cardiovascular elevados.');
+    }
+    // Patrón atípico (Guías de la American Heart Association - Infarto en la mujer y diabéticos)
+    if (s.fatigaExtremaBruscaSinExplicacion && (s.malestarEpigastricoONauseas || s.dolorMandibulaEspalda)) {
+      banderasRojasInfarto.push('Patrón de infarto agudo atípico (disnea, náuseas o dolor de mandíbula/espalda con fatiga extrema, sin dolor opresivo clásico, frecuente en mujeres).');
     }
 
     if (banderasRojasInfarto.length > 0) {

@@ -68,4 +68,17 @@ assert.strictEqual(AnsiaCalm.GROUNDING_STEPS[0].paso, 5);
 assert.strictEqual(AnsiaCalm.GROUNDING_STEPS[4].paso, 1);
 console.log('✅ Test 6 Superado: Secuencia de anclaje sensorial 5-4-3-2-1 verificada.');
 
-console.log('\n--- TODOS LOS 6 TESTS DE ANSIACALM SUPERADOS EXITOSAMENTE ---');
+// Test 7: Banderas rojas atípicas de infarto en mujer (fatiga extrema súbita + dolor de mandíbula/epigastrio)
+const triajeAtipico = AnsiaCalm.evaluarTriaje({
+  fatigaExtremaBruscaSinExplicacion: true,
+  malestarEpigastricoONauseas: true,
+  dolorMandibulaEspalda: true,
+  dolorOpresivoBrazoMandibula: false,
+  sensacionPesoAplastantePecho: false
+});
+assert.strictEqual(triajeAtipico.esEmergenciaMedica, true);
+assert.strictEqual(triajeAtipico.clasificacion, 'alerta_urgencias_112');
+assert.ok(triajeAtipico.banderasRojas[0].includes('atípico'));
+console.log('✅ Test 7 Superado: Presentación atípica de infarto en mujeres discriminada hacia el 112 sin confundirla con pánico.');
+
+console.log('\n--- TODOS LOS 7 TESTS DE ANSIACALM v2.0.0 SUPERADOS EXITOSAMENTE ---');
