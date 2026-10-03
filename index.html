@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnsiaCalm — Desescalada de Ataques de Pánico, Respiración 4-7-8 & Grounding</title>
+  <style>
+    :root {
+      --bg: #090e11;
+      --surface: #0f171c;
+      --surface-card: #18232a;
+      --surface-border: #22323d;
+      --text-main: #f0fdf4;
+      --text-muted: #84a98c;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --accent: #2dd4bf;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --radius: 16px;
+      --shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; padding: 24px 16px; display: flex; flex-direction: column; align-items: center; }
+    .container { width: 100%; max-width: 840px; }
+
+    header { text-align: center; margin-bottom: 28px; }
+    .badge { display: inline-block; padding: 6px 14px; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); color: #6ee7b7; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px; border: 1px solid rgba(16, 185, 129, 0.3); }
+    h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    h1 span { background: linear-gradient(135deg, #34d399 0%, #22d3ee 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    p.lead { color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; line-height: 1.5; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; background: var(--surface); padding: 6px; border-radius: var(--radius); border: 1px solid var(--surface-border); margin-bottom: 24px; overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 12px 16px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn.active { background: var(--primary); color: #042f1a; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); font-weight: 700; }
+
+    .panel { display: none; background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); margin-bottom: 24px; }
+    .panel.active { display: block; }
+
+    h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.4; }
+
+    /* Breathing Orb Section */
+    .orb-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 16px; min-height: 380px; position: relative; }
+    .orb-outer { width: 220px; height: 220px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; transition: all 1s ease-in-out; }
+    .orb-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(45, 212, 191, 0.35) 0%, rgba(16, 185, 129, 0.05) 70%, transparent 100%); filter: blur(15px); }
+    .orb-core { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(135deg, #34d399, #059669); box-shadow: 0 0 35px rgba(52, 211, 153, 0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; transition: transform 1s ease-in-out; }
+    .orb-phase { font-size: 1.15rem; font-weight: 700; color: #042f1a; text-transform: uppercase; letter-spacing: 0.05em; }
+    .orb-seconds { font-size: 2rem; font-weight: 800; color: #042f1a; margin-top: 2px; }
+
+    .breathing-instructions { font-size: 1.2rem; font-weight: 600; text-align: center; margin-top: 28px; min-height: 48px; color: #ecfdf5; line-height: 1.4; }
+
+    .selector-bar { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .pill-btn { background: var(--surface-card); border: 1px solid var(--surface-border); color: #d1fae5; padding: 8px 16px; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .pill-btn.active { background: #064e3b; border-color: var(--primary); color: #6ee7b7; }
+
+    .btn-group { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+    .action-btn { background: var(--primary); color: #042f1a; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .action-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-secondary { background: var(--surface-card); color: #d1fae5; border: 1px solid var(--surface-border); }
+    .btn-secondary:hover { background: #22323d; }
+
+    /* Grounding Step Cards */
+    .grounding-box { display: flex; flex-direction: column; gap: 16px; }
+    .grounding-card { background: var(--surface-card); border: 1px solid var(--surface-border); border-radius: 12px; padding: 18px 20px; display: flex; gap: 16px; align-items: flex-start; transition: border-color 0.2s; }
+    .grounding-card.completed { border-color: var(--primary); background: rgba(16, 185, 129, 0.08); }
+    .step-number { width: 38px; height: 38px; border-radius: 50%; background: #064e3b; color: #6ee7b7; font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-content { flex: 1; }
+    .step-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .step-question { font-size: 0.95rem; color: #a7f3d0; margin-bottom: 6px; }
+    .step-example { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+    .step-check { margin-top: 6px; }
+
+    /* Triage Checklist */
+    .checklist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .check-item { display: flex; align-items: center; gap: 12px; background: var(--surface-card); padding: 14px 18px; border-radius: 10px; border: 1px solid var(--surface-border); cursor: pointer; }
+    .check-item input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+
+    .result-alert { padding: 20px; border-radius: 12px; border: 1px solid; margin-top: 20px; }
+    .alert-urgencia { background: rgba(239, 68, 68, 0.15); border-color: var(--danger); }
+    .alert-panico { background: rgba(16, 185, 129, 0.15); border-color: var(--primary); }
+
+    .hotlines-card { background: #064e3b; border: 1px solid #059669; border-radius: 12px; padding: 20px; margin-top: 24px; color: #ecfdf5; }
+    .hotlines-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 12px; }
+    .hotline-item { background: rgba(0, 0, 0, 0.25); padding: 12px; border-radius: 8px; }
+    .hotline-item strong { display: block; font-size: 1.1rem; color: #34d399; }
+
+    .sound-toggle { position: absolute; top: 16px; right: 16px; background: var(--surface-card); border: 1px solid var(--surface-border); color: #d1fae5; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">🧠 Neuro-Regulación Autonómica & Salud Mental</div>
+      <h1>Ansia<span>Calm</span></h1>
+      <p class="lead">Desescalada fisiológica de ataques de pánico y crisis de angustia aguda. Guía de respiración vagal 4-7-8, anclaje sensorial y triaje de seguridad.</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setTab('respiracion')">1. Respiración Guiada</button>
+      <button class="tab-btn" onclick="setTab('grounding')">2. Anclaje 5-4-3-2-1</button>
+      <button class="tab-btn" onclick="setTab('triaje')">3. ¿Pánico o Infarto?</button>
+      <button class="tab-btn" onclick="setTab('ayuda')">4. Teléfonos de Crisis</button>
+    </div>
+
+    <!-- PANEL 1: RESPIRACIÓN GUIADA -->
+    <div id="panel-respiracion" class="panel active">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2>Regulador del Nervio Vago</h2>
+        <button id="sound-btn" class="pill-btn" onclick="toggleSonidoCalma()">🔊 Audio 432 Hz: OFF</button>
+      </div>
+      <p class="subtitle">Sincroniza tu respiración con el orbe. Al alargar la exhalación, el corazón disminuye los latidos de forma refleja (arritmia sinusal respiratoria).</p>
+
+      <div class="selector-bar">
+        <button class="pill-btn active" onclick="cambiarPatron('478', this)">Técnica 4-7-8 (Freno Vagal)</button>
+        <button class="pill-btn" onclick="cambiarPatron('suspiro', this)">Suspiro Fisiológico (Rápido)</button>
+        <button class="pill-btn" onclick="cambiarPatron('box', this)">Respiración Cuadrada (4x4)</button>
+      </div>
+
+      <div class="orb-container">
+        <div class="orb-outer" id="orb-outer">
+          <div class="orb-glow"></div>
+          <div class="orb-core" id="orb-core">
+            <div class="orb-phase" id="orb-phase">PREPARADO</div>
+            <div class="orb-seconds" id="orb-seconds">--</div>
+          </div>
+        </div>
+        <div class="breathing-instructions" id="breathing-instructions">Pulsa "Comenzar" y sigue el ritmo suavemente. No fuerces.</div>
+      </div>
+
+      <div class="btn-group">
+        <button id="btn-toggle-breath" class="action-btn" onclick="toggleRespiracion()">▶️ Comenzar Respiración</button>
+        <button class="action-btn btn-secondary" onclick="reiniciarRespiracion()">🔄 Reiniciar</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2: GROUNDING 5-4-3-2-1 -->
+    <div id="panel-grounding" class="panel">
+      <h2>Técnica de Anclaje Sensorial (Grounding 5-4-3-2-1)</h2>
+      <p class="subtitle">Interrumpe el bucle de rumiación y miedo irracional en la amígdala cerebral trayendo tu atención a los 5 sentidos físicos en el momento presente.</p>
+
+      <div class="grounding-box" id="grounding-box"></div>
+
+      <div class="btn-group" style="margin-top: 24px;">
+        <button class="action-btn" onclick="resetGrounding()">🔄 Reiniciar Ejercicio de Anclaje</button>
+      </div>
+    </div>
+
+    <!-- PANEL 3: TRIAJE PÁNICO VS INFARTO -->
+    <div id="panel-triaje" class="panel">
+      <h2>Triaje de Urgencia: ¿Pánico o Problema Cardíaco?</h2>
+      <p class="subtitle">El ataque de pánico imita con gran intensidad un infarto por la adrenalina, pero existen signos clínicos claros de diferenciación.</p>
+
+      <div class="checklist">
+        <label class="check-item">
+          <input type="checkbox" id="chk-dolor-opresivo" onchange="ejecutarTriaje()">
+          <div><strong>Dolor opresivo irradiado:</strong> Opresión intensa en el centro del pecho que se extiende a brazo izquierdo, mandíbula o espalda.</div>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" id="chk-peso-aplastante" onchange="ejecutarTriaje()">
+          <div><strong>Sensación de peso aplastante:</strong> Sensación de pesadez que no se alivia al cambiar de postura ni empeora al presionar el tórax.</div>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" id="chk-hormigueo" onchange="ejecutarTriaje()">
+          <div><strong>Hormigueo en dedos o labios:</strong> Parestesias bilaterales en manos o cara provocadas por respirar demasiado rápido (hiperventilación).</div>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" id="chk-pico-brusco" onchange="ejecutarTriaje()">
+          <div><strong>Pico muy brusco (&lt; 10 min):</strong> La taquicardia y el miedo alcanzaron su punto máximo en cuestión de minutos estando en reposo.</div>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" id="chk-desrealizacion" onchange="ejecutarTriaje()">
+          <div><strong>Sensación de irrealidad:</strong> Sentir que lo que ocurre alrededor no es real o sentirse desconectado del propio cuerpo.</div>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" id="chk-miedo-morir" onchange="ejecutarTriaje()">
+          <div><strong>Miedo a morir o perder el control:</strong> Convencimiento absoluto y repentino de peligro inminente sin causa externa evidente.</div>
+        </label>
+      </div>
+
+      <div id="triaje-resultado"></div>
+    </div>
+
+    <!-- PANEL 4: AYUDA Y TELÉFONOS -->
+    <div id="panel-ayuda" class="panel">
+      <h2>Líneas de Atención Telefónica & Crisis</h2>
+      <p class="subtitle">Si necesitas hablar con alguien ahora mismo, estos teléfonos son gratuitos, confidenciales y atienden las 24 horas del día.</p>
+
+      <div class="hotlines-card">
+        <h3>Recursos de Apoyo Inmediato (España)</h3>
+        <div class="hotlines-grid">
+          <div class="hotline-item">
+            <strong>024</strong>
+            <span>Línea de atención a la conducta de crisis y salud mental (Gratuito, 24/7).</span>
+          </div>
+          <div class="hotline-item">
+            <strong>112</strong>
+            <span>Emergencias médicas, sanitarias y rescate.</span>
+          </div>
+          <div class="hotline-item">
+            <strong>717 003 717</strong>
+            <span>Teléfono de la Esperanza (Apoyo emocional y crisis de ansiedad).</span>
+          </div>
+          <div class="hotline-item">
+            <strong>061</strong>
+            <span>Urgencias sanitarias autonómicas.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="ansiacalm.js"></script>
+  <script>
+    var patronActual = '478';
+    var respirando = false;
+    var timerId = null;
+    var faseIdx = 0;
+    var tiempoRestanteFase = 0;
+    var audioCtx = null;
+    var oscilador = null;
+    var ganancia = null;
+
+    function initGroundingUI() {
+      var box = document.getElementById('grounding-box');
+      box.innerHTML = '';
+      AnsiaCalm.GROUNDING_STEPS.forEach(function (st, idx) {
+        var card = document.createElement('div');
+        card.className = 'grounding-card';
+        card.id = 'ground-step-' + idx;
+        card.innerHTML = 
+          '<div class="step-number">' + st.paso + '</div>' +
+          '<div class="step-content">' +
+            '<div class="step-title">' + st.sentido + '</div>' +
+            '<div class="step-question">' + st.pregunta + '</div>' +
+            '<div class="step-example">' + st.ejemplo + '</div>' +
+            '<label class="step-check"><input type="checkbox" onchange="toggleStepCompleted(' + idx + ', this)"> Hecho</label>' +
+          '</div>';
+        box.appendChild(card);
+      });
+    }
+
+    function toggleStepCompleted(idx, chk) {
+      var card = document.getElementById('ground-step-' + idx);
+      if (chk.checked) {
+        card.classList.add('completed');
+      } else {
+        card.classList.remove('completed');
+      }
+    }
+
+    function resetGrounding() {
+      initGroundingUI();
+    }
+
+    function cambiarPatron(tipo, btn) {
+      if (respirando) toggleRespiracion();
+      patronActual = tipo;
+      var btns = document.querySelectorAll('.selector-bar .pill-btn');
+      btns.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('breathing-instructions').textContent = AnsiaCalm.PATRONES_RESPIRACION[tipo].descripcion;
+    }
+
+    function toggleRespiracion() {
+      var btn = document.getElementById('btn-toggle-breath');
+      if (respirando) {
+        // Pausar
+        respirando = false;
+        clearInterval(timerId);
+        btn.textContent = '▶️ Reanudar Respiración';
+        document.getElementById('orb-phase').textContent = 'PAUSA';
+      } else {
+        // Iniciar
+        respirando = true;
+        btn.textContent = '⏸️ Pausar';
+        iniciarCiclo();
+      }
+    }
+
+    function reiniciarRespiracion() {
+      respirando = false;
+      clearInterval(timerId);
+      faseIdx = 0;
+      document.getElementById('btn-toggle-breath').textContent = '▶️ Comenzar Respiración';
+      document.getElementById('orb-phase').textContent = 'PREPARADO';
+      document.getElementById('orb-seconds').textContent = '--';
+      var orbCore = document.getElementById('orb-core');
+      orbCore.style.transform = 'scale(1)';
+    }
+
+    function iniciarCiclo() {
+      var patron = AnsiaCalm.PATRONES_RESPIRACION[patronActual];
+      var fases = patron.fases;
+
+      function ejecutarFase() {
+        if (!respirando) return;
+        var fase = fases[faseIdx];
+        var duracionSegundos = Math.round(fase.duracionMs / 1000);
+        tiempoRestanteFase = duracionSegundos;
+
+        document.getElementById('orb-phase').textContent = fase.tipo.replace('_', ' ').toUpperCase();
+        document.getElementById('orb-seconds').textContent = tiempoRestanteFase + 's';
+        document.getElementById('breathing-instructions').textContent = fase.instruccion;
+
+        var orbCore = document.getElementById('orb-core');
+        if (fase.tipo === 'inhala' || fase.tipo === 'inhala_extra') {
+          orbCore.style.transform = 'scale(1.45)';
+          orbCore.style.transition = 'transform ' + (fase.duracionMs / 1000) + 's ease-in-out';
+        } else if (fase.tipo === 'exhala') {
+          orbCore.style.transform = 'scale(0.85)';
+          orbCore.style.transition = 'transform ' + (fase.duracionMs / 1000) + 's ease-in-out';
+        } else {
+          orbCore.style.transition = 'none';
+        }
+
+        clearInterval(timerId);
+        timerId = setInterval(function () {
+          tiempoRestanteFase--;
+          if (tiempoRestanteFase > 0) {
+            document.getElementById('orb-seconds').textContent = tiempoRestanteFase + 's';
+          } else {
+            clearInterval(timerId);
+            faseIdx = (faseIdx + 1) % fases.length;
+            ejecutarFase();
+          }
+        }, 1000);
+      }
+
+      ejecutarFase();
+    }
+
+    function toggleSonidoCalma() {
+      var btn = document.getElementById('sound-btn');
+      if (oscilador) {
+        // Apagar
+        oscilador.stop();
+        oscilador.disconnect();
+        oscilador = null;
+        btn.textContent = '🔊 Audio 432 Hz: OFF';
+      } else {
+        // Encender
+        try {
+          audioCtx = audioCtx || AnsiaCalm.generarAudioContext();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          oscilador = audioCtx.createOscillator();
+          ganancia = audioCtx.createGain();
+          oscilador.type = 'sine';
+          oscilador.frequency.setValueAtTime(432, audioCtx.currentTime); // Tono armónico 432 Hz
+          ganancia.gain.setValueAtTime(0.05, audioCtx.currentTime); // Volumen suave y sutil
+          oscilador.connect(ganancia);
+          ganancia.connect(audioCtx.destination);
+          oscilador.start();
+          btn.textContent = '🔈 Audio 432 Hz: ON';
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
+    function ejecutarTriaje() {
+      var s = {
+        dolorOpresivoBrazoMandibula: document.getElementById('chk-dolor-opresivo').checked,
+        sensacionPesoAplastantePecho: document.getElementById('chk-peso-aplastante').checked,
+        hormigueoDedosBoca: document.getElementById('chk-hormigueo').checked,
+        picoBruscoMenos10Min: document.getElementById('chk-pico-brusco').checked,
+        sensacionDesrealizacion: document.getElementById('chk-desrealizacion').checked,
+        miedoPerderControlOMorir: document.getElementById('chk-miedo-morir').checked
+      };
+
+      var res = AnsiaCalm.evaluarTriaje(s);
+      var container = document.getElementById('triaje-resultado');
+
+      if (res.esEmergenciaMedica) {
+        container.innerHTML = 
+          '<div class="result-alert alert-urgencia">' +
+            '<h3 style="color: #f87171; font-size: 1.2rem; margin-bottom: 8px;">' + res.titulo + '</h3>' +
+            '<p style="margin-bottom: 12px;">' + res.explicacion + '</p>' +
+            '<ul style="margin-left: 20px; line-height: 1.6;">' +
+              res.instrucciones.map(function(i){ return '<li>' + i + '</li>'; }).join('') +
+            '</ul>' +
+          '</div>';
+      } else {
+        container.innerHTML = 
+          '<div class="result-alert alert-panico">' +
+            '<h3 style="color: #34d399; font-size: 1.2rem; margin-bottom: 8px;">' + res.titulo + '</h3>' +
+            '<p style="margin-bottom: 12px;">' + res.explicacion + '</p>' +
+            '<ul style="margin-left: 20px; line-height: 1.6;">' +
+              res.puntosCalma.map(function(p){ return '<li>' + p + '</li>'; }).join('') +
+            '</ul>' +
+          '</div>';
+      }
+    }
+
+    function setTab(tabName) {
+      var tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+
+      var panels = document.querySelectorAll('.panel');
+      panels.forEach(function (p) { p.classList.remove('active'); });
+
+      if (tabName === 'respiracion') {
+        tabs[0].classList.add('active');
+        document.getElementById('panel-respiracion').classList.add('active');
+      } else if (tabName === 'grounding') {
+        tabs[1].classList.add('active');
+        document.getElementById('panel-grounding').classList.add('active');
+      } else if (tabName === 'triaje') {
+        tabs[2].classList.add('active');
+        document.getElementById('panel-triaje').classList.add('active');
+      } else if (tabName === 'ayuda') {
+        tabs[3].classList.add('active');
+        document.getElementById('panel-ayuda').classList.add('active');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', function () {
+      initGroundingUI();
+      ejecutarTriaje();
+    });
+  </script>
+</body>
+</html>
